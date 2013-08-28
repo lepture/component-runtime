@@ -1,0 +1,11 @@
+{
+  "name": "component-runtime",
+  "version": "0.1.0",
+  "author": "Hsiaoming Yang <me@lepture.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lepture/component-runtime"
+  },
+  "dependencies": {
+  }
+}
