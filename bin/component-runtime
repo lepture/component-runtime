@@ -6,9 +6,6 @@
 
 var program = require('commander');
 var Builder = require('..');
-var component = require('component');
-var utils = component.utils;
-var log = component.utils.log;
 var path = require('path');
 var fs = require('fs');
 var exists = fs.existsSync || path.existsSync;
@@ -33,16 +30,16 @@ program.on('--help', function(){
   console.log('  Examples:');
   console.log();
   console.log('    # build to ./build');
-  console.log('    $ component build');
+  console.log('    $ component runtime');
   console.log();
   console.log('    # build to ./dist as assets.js, assets.css');
-  console.log('    $ component build -o dist -n assets');
+  console.log('    $ component runtime -o dist -n assets');
   console.log();
   console.log('    # build standalone as window.$');
-  console.log('    $ component build --standalone $');
+  console.log('    $ component runtime --standalone $');
   console.log();
   console.log('    # build with plugins');
-  console.log('    $ component build -u foo,bar,baz');
+  console.log('    $ component runtime -u foo,bar,baz');
   console.log();
 });
 
@@ -52,7 +49,7 @@ program.parse(process.argv);
 
 // component.json required
 
-if (!exists('component.json')) utils.fatal('missing component.json');
+if (!exists('component.json')) fatal('missing component.json');
 
 // load json
 
@@ -104,7 +101,7 @@ if (program.dev) {
 
 if (program.verbose) console.log();
 builder.build(function(err, obj){
-  if (err) utils.fatal(err.message);
+  if (err) fatal(err.message);
   var js = '';
   var css = obj.css.trim();
 
@@ -148,3 +145,26 @@ builder.build(function(err, obj){
   log('duration', duration + 'ms');
   console.log();
 });
+
+function fatal() {
+    console.error();
+    error.apply(null, arguments);
+    console.error();
+    process.exit(1);
+}
+
+function error(msg) {
+  var w = 10;
+  var type = 'error';
+  var len = Math.max(0, w - type.length);
+  var pad = Array(len + 1).join(' ');
+  console.error('  \033[31m%s\033[m : \033[90m%s\033[m', pad + type, msg);
+}
+
+function log(type, msg, color) {
+  color = color || '36';
+  var w = 10;
+  var len = Math.max(0, w - type.length);
+  var pad = Array(len + 1).join(' ');
+  console.log('  \033[' + color + 'm%s\033[m : \033[90m%s\033[m', pad + type, msg);
+}
