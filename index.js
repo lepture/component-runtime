@@ -9,7 +9,7 @@ var requirejs = fs.readFileSync(__dirname + '/lib/require.js', 'utf8');
 function register(builder, file, js) {
   if (builder.config.scripts.length === 1) {
     file = builder.config.name;
-  } else if (isMatch(builder.config.main, file)) {
+  } else if (builder.config.main && isMatch(builder.config.main, file)) {
     file = builder.config.name + '/index.js';
   } else {
     file = builder.config.name + '/' + file;
