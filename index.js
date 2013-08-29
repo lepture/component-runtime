@@ -6,24 +6,23 @@ var debug = require('debug')('component:builder');
 var requirejs = fs.readFileSync(__dirname + '/lib/require.js', 'utf8');
 
 
-function register(builder, file, js){
-  if (builder.root) {
-    file = builder.config.name + '/' + file
+function register(builder, file, js) {
+  if (builder.config.scripts.length === 1) {
+    file = builder.config.name;
+  } else if (isMatch(builder.config.main, file)) {
+    file = builder.config.name + '/index.js';
   } else {
-    // remove namespace
-    var basename = builder.basename.split('-');
-    basename.shift();
-    file = basename.join('-') + '/' + file;
+    file = builder.config.name + '/' + file;
   }
 
   if (builder.sourceUrls) {
     js = JSON.stringify(js + '//@ sourceURL=' + file);
     js = js.replace(/\\n/g, '\\n\\\n');
-    return 'require.register("' + file + '", Function("exports, require, module",\n'
+    return 'require.register("' + file + '", Function("require, exports, module",\n'
       + js
       + '\n));';
   } else {
-    return 'require.register("' + file + '", function(exports, require, module){\n'
+    return 'require.register("' + file + '", function(require, exports, module){\n'
       + js
       + '\n});';
   }
@@ -66,6 +65,12 @@ Builder.prototype.buildScripts = function(fn){
 
 function empty(s) {
     return '' != s;
+}
+
+function isMatch(a, b) {
+  a = a.replace(/^\.\//, '');
+  b = b.replace(/^\.\//, '');
+  return a === b;
 }
 
 module.exports = Builder;
