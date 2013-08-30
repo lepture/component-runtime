@@ -18,11 +18,11 @@ function register(builder, file, js) {
   if (builder.sourceUrls) {
     js = JSON.stringify(js + '//@ sourceURL=' + file);
     js = js.replace(/\\n/g, '\\n\\\n');
-    return 'require.register("' + file + '", Function("require, exports, module",\n'
+    return 'require.register("' + file + '", Function("exports, require, module",\n'
       + js
       + '\n));';
   } else {
-    return 'require.register("' + file + '", function(require, exports, module){\n'
+    return 'require.register("' + file + '", function(exports, require, module){\n'
       + js
       + '\n});';
   }
