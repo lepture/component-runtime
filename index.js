@@ -7,10 +7,13 @@ var requirejs = fs.readFileSync(__dirname + '/lib/require.js', 'utf8');
 
 
 function register(builder, file, js) {
+  var main = builder.config.main, prefix;
+  if (main && main !== 'index.js' && isMatch(builder.config.main, file)) {
+    prefix = builder.config.name;
+  }
+
   if (builder.config.scripts.length === 1) {
     file = builder.config.name;
-  } else if (builder.config.main && isMatch(builder.config.main, file)) {
-    file = builder.config.name + '/index.js';
   } else {
     file = builder.config.name + '/' + file;
   }
@@ -18,14 +21,20 @@ function register(builder, file, js) {
   if (builder.sourceUrls) {
     js = JSON.stringify(js + '//@ sourceURL=' + file);
     js = js.replace(/\\n/g, '\\n\\\n');
-    return 'require.register("' + file + '", Function("exports, require, module",\n'
+    js = 'require.register("' + file + '", Function("exports, require, module",\n'
       + js
       + '\n));';
   } else {
-    return 'require.register("' + file + '", function(exports, require, module){\n'
+    js = 'require.register("' + file + '", function(exports, require, module){\n'
       + js
       + '\n});';
   }
+
+  if (prefix) {
+    js += '\nrequire.main("' + builder.config.name + '", "' + file + '");';
+  }
+
+  return js;
 }
 
 
