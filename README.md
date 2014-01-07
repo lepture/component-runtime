@@ -14,6 +14,10 @@ Build your components with less code.
 
 ## History
 
+### Jan 7, 2014 `0.2.0`
+
+Better support for main.
+
 ### Sep 3, 2013 `0.1.1`
 
 Adjust position of require and exports.
